@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+<title>ApplicationCash API</title>
+<style>
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: black;
+  display: inline-block;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: red;
+}
+
+.inputfile + label {
+  cursor: pointer;
+}
+
+.inputfile: focus + label {
+  outline: 1px dotted #000;
+}
+
+.inputfile + label * {
+  pointer-events: none;
+}
+
+.js .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.no-js .inputfile + label {
+    display: none;
+}
+
+</style>
+</head>
+<body>
+<input type="file" name="file" id="file" class="inputfile" data-multiple-caption="{count} files selected" multiple />
+<label for="file">Choose a file</label>
+
+<div class="explanation">
+  <p>width, heightはボタンの幅と高さを決める。opacityによってボタンをうすくできる。0
+  にするとなくなる。</p>
+  <p>overflowは中身がはみ出した時にscrollさせるか隠すか等を選べる</p>
+  <p>absoluteをえらぶと、兄弟要素に影響を与えないことを保証する</p>
+  <p>.inputfile + label は .inputfile のすぐあとにある lableという意味。.inputfile ~ lable は.inputfile のすぐ前にあるlabelという意味
+  <p>emは今のフォントサイズと比べてのサイズ。</p>
+  <p>font-weightは通常が４００、boldは７００。normal, bold, bolder, lighterがある</p>
+  <p>pointer-eventsは通常はなくてもよいみたい。でもhrefを無効にしたい時や、fastclick(クリックした時の反応を機敏にする)にはこのselectorを使わないと反応しないらしい。</p>
+  <p>multipleをinputにいれた場合、複数の選択が可能となる。たぶん、data-multiple-captionはHTML5限定で、データが読み込みされた時のことばの表示の内容を決定している</p>
+  <p>if の部分：　A.replace('a', 'b');とした場合、Aの中のaをbと交換する。今回の場合、data-multiple-captionもしくは何もないところからデータをもってきて、その中居の{count}をthis.files.length（アップロードしたファイルの数）を表じさせる。</p>
+  <p>multipleはまだIE9ではサポートされていない。</p>
+  <p>captionについて：１つしかファイルをアップしない場合はファイル名を表示、２つ以上の場合はファイルの数を表示。popは最後の要素をとってしまう。</p>
+  <p>firefoxはinput[type="file"]:focusが機能しないらしい。</p>
+
+   https://tympanus.net/codrops/2015/09/15/styling-customizing-file-inputs-smart-way/
+
+
+</div>
+</body>
+<script>
+var inputs = document.querySelectorAll( '.inputfile' );
+Array.prototype.forEach.call( inputs, function( input )
+{
+	var label	 = input.nextElementSibling;
+	var labelVal = label.innerHTML;
+
+	input.addEventListener( 'change', function( e )
+	{
+		var fileName = '';
+		if( this.files && this.files.length > 1 ){
+      fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+    } else {
+      fileName = e.target.value.split( '\\' ).pop();
+    }
+
+
+		if( fileName ) {
+      label.querySelector( 'span' ).innerHTML = fileName;
+    } else {
+      label.innerHTML = labelVal;
+    }
+	});
+});
+(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);
+</script>
+</html>

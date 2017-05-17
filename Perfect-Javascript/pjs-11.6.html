@@ -1,0 +1,42 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<script type="text/javascript">
+
+onload = function() {
+  var x;
+  var y;
+  var cx;
+  var cy;
+
+  document.onmouseover = function(e) {
+    x = e.clientX;
+    y = e.clientY;
+    cx = e.layerX;
+    cy = e.layerY;
+
+    document.getElementById("x").innerHTML = "X is " + x;
+    document.getElementById("y").innerHTML = "Y is " + y;
+    document.getElementById("cx").innerHTML = "Layer X is " + cx;
+    document.getElementById("cy").innerHTML = "Layer Y is " + cy;
+
+  }
+
+}
+
+
+</script>
+<title>座標テスト</title>
+</head>
+<body>
+<div>
+<p id="x"></p>
+<p id="y"></p>
+<p id="cx"></p>
+<p id="cy"></p>
+</div>
+<div id="box" style="position:absolute; margin-left:200px; margin-top: 100px; width: 200px; height: 200px; background-color: yellow;"></div>
+
+</body>
+</html>

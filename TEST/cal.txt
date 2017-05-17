@@ -1,0 +1,3 @@
+2 hello.txt morning.txt sample1.txt sample2.txt sample3.txt 3
+3 * 2
+3 + 5

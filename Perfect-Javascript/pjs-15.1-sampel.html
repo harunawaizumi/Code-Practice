@@ -1,0 +1,30 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+
+<title>ApplicationCash API</title>
+</head>
+<body>
+
+<div>
+<ul>
+	<li id="a">What is INNER HTML</li>
+	<li id="b">What is textCONTENT</li>
+	<li id="c">What is OUTER HTML</li>
+</ul>
+
+</div>
+</body>
+<script type="text/javascript">
+
+var aa = document.getElementById("a").innerHTML = "Seii<strong>chiro</strong> INOUE";
+var bb = document.getElementById("b").textContent = "Sho<strong>ta</strong> HAMABE";
+
+var cc = document.getElementById("c").outerHTML = "Tak<strong>uro</strong> TSUCHIE";
+
+
+
+</script>
+</html>

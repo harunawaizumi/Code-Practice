@@ -1,0 +1,45 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>ApplicationCash API</title>
+<style>
+.box__dragndrop,
+.box__uploading,
+.box__success,
+.box__error {
+  display: none;
+}
+</style>
+</head>
+<body>
+  <div>
+  <input type="file" id="input_files">
+  <div id="output_files"></div>
+  <div id="output_image"></div>
+</div>
+</body>
+<script>
+function handleSelector(evt) {
+  var files = evt.target.files;
+  var output = [];
+
+  for (var i = 0, f; f = files[i]; i++) {
+    output.push(
+      '<li><strong>',
+      encodeURI(f.name),
+      '</strong> (',
+      f.type,
+      ') - ',
+      f.size,
+      ' bytes, last modified date ',
+      f.lastModifiedDate.toLocaleDateString(),
+      '</li>'
+    );
+  };
+  document.getElementById("output_files").innerHTML = '<ul>' + output.join("") + '</ul>';
+}
+document.getElementById("input_files").addEventListener("change", handleSelector, false);
+
+</script>
+</html>

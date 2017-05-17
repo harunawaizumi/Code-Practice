@@ -1,0 +1,35 @@
+var io = require('')<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>ApplicationCash API</title>
+<style>
+
+</style>
+</head>
+<body>
+  <div>
+  <input type="file" id="input_files">
+  <div id="output_files"></div>
+</div>
+</body>
+<script>
+ var io = require('socket.io').listen(server);
+
+ io.sockets.on('connection', function(socket) {
+   console.log('connected', socket.id);
+
+   socket.on('chat', function(chat) {
+     console.log('message: ', chat.message);
+     io.emit('chat', chat);
+   });
+
+   socket.on('disconnect', function() {
+     console.log('disconnect');
+   });
+ });
+
+
+
+</script>
+</html>

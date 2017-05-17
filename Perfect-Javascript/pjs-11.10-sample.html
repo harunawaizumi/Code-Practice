@@ -1,0 +1,59 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+
+<title>Send Request</title>
+</head>
+<body>
+
+<h1>TEST</h1>
+<div id = "message">TYPE URL</div>
+<input type="text" id="url">
+<input type="button" onclick="doAction();" value="Ajax">
+
+</body>
+<script type="text/javascript">
+
+var ajax = null;
+console.log(document.title);
+
+function doAction() {
+	var txt = document.getElementById("url");
+	var callback = function() {
+		var target = document.getElementById("message");
+		target.innerHTML = ajax.getResponse();
+	}
+	ajax = new AjaxObject(txt.value, callback);
+}
+
+function AjaxObject(url, callback) {
+	var response = null;
+	var callback = callback;
+
+	ajaxStart(url);
+
+	this.getResponse = function() {
+		return response;
+	}
+
+	function ajaxStart(url) {
+		var req = createRequest();
+		if(req === null) {
+			alert("ERROR");
+			return;
+		}
+
+		req.open("GET", url);
+		req.setRequestHeader("User-Agent", "XMLHttpRequest");
+		req.onreadyStatechange = function() {
+			if (this.readyState === 4 && this.state == 200) {
+			}
+			req.send();
+		}
+	}
+}
+
+</script>
+</html>

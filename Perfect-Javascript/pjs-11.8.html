@@ -1,0 +1,21 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+
+<title>座標テスト</title>
+</head>
+<body>
+<div id="box" style="position: absolute;">Hello!</div>
+</body>
+<script type="text/javascript">
+var elem = document.getElementById("box");
+var frame = 0;
+setInterval( function() {
+  frame++;
+  elem.style.left = frame * 10 + "px";
+}, 100);
+
+</script>
+</html>

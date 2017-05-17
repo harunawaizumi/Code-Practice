@@ -1,0 +1,207 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>ApplicationCash API</title>
+<style>
+
+</style>
+</head>
+<body>
+  <div>
+    <div id="aaa" style="position:absolute; left:0px;   top:0px;   width:200px; height:200px; background:#fcc; cursor:move;" ></div>
+    <div id="bbb" style="position:absolute; left:50px;  top:50px;  width:200px; height:200px; background:#cfc; cursor:move;" ></div>
+    <div id="ccc" style="position:absolute; left:100px; top:100px; width:200px; height:200px; background:#ccf; cursor:move;" ></div>
+  </div>
+</body>
+<script>
+<!--
+
+	// ------------------------------------------------------------
+	// 各要素を取得する
+	// ------------------------------------------------------------
+	var element_a = document.getElementById("aaa");
+	var element_b = document.getElementById("bbb");
+	var element_c = document.getElementById("ccc");
+
+	// ------------------------------------------------------------
+	// 要素をドラッグ移動化
+	// ------------------------------------------------------------
+	var dragger_a = new ElementDragger(element_a);
+	var dragger_b = new ElementDragger(element_b);
+	var dragger_c = new ElementDragger(element_c);
+
+	// ------------------------------------------------------------
+	// 要素をドラッグ移動化するコンストラクタ
+	// ------------------------------------------------------------
+	function ElementDragger(element){
+		var _this = this;
+
+		// ------------------------------------------------------------
+		// イベントハンドラ関連
+		// ------------------------------------------------------------
+		function mouseDown(e){
+			mouse_move.x = mouse_down.x = e.clientX;
+			mouse_move.y = mouse_down.y = e.clientY;
+			mouse_pressed = true;
+
+			// タスク開始
+      createTask();
+		};
+		function mouseMove(e){
+			mouse_move.x = e.clientX;
+			mouse_move.y = e.clientY;
+		};
+		function mouseUp(e){
+			mouse_move.x = e.clientX;
+			mouse_move.y = e.clientY;
+			mouse_pressed = false;
+		};
+		function dragStart(e){
+			if(e.preventDefault){
+				e.preventDefault();
+			}else{
+				return false;
+			}
+		};
+
+		// ------------------------------------------------------------
+		// タスク開始
+		// ------------------------------------------------------------
+		function createTask(){
+			// 二重起動を阻止
+			deleteTask();
+
+			// ------------------------------------------------------------
+			// 初期化
+			// ------------------------------------------------------------
+			dragging = false;
+			mouse_old.x = mouse_move.x;
+			mouse_old.y = mouse_move.y;
+
+			// 現在の適用スタイルをすべて取得
+			var computed_style = (function(){
+				return (function(){
+					var d = element.ownerDocument;
+					if(!d) return null;
+					var w = d.defaultView;
+					if(!w) return null;
+					if(!w.getComputedStyle) return null;
+					return w.getComputedStyle(element);
+				})() || element.currentStyle || null;
+			})();
+
+			// 要素の現在の位置を取得
+			element_pos.x = parseFloat(computed_style.left) || 0;
+			element_pos.y = parseFloat(computed_style.top)  || 0;
+      // ------------------------------------------------------------
+      			// 実行
+      			// ------------------------------------------------------------
+      			time_handle = setInterval(function(){
+      				// マウスボタンを離した
+      				if(!mouse_pressed){
+      					// タスクを終了
+      					deleteTask();
+      					return;
+      				}
+
+      				// ドラッグ開始以前
+      				if(!dragging){
+
+      					// 少し移動してからドラッグ操作とみなす
+      					var x = mouse_move.x - mouse_down.x;
+      					var y = mouse_move.y - mouse_down.y;
+      					var distance = Math.sqrt(x * x + y * y);
+      					if(distance >= 3){
+
+      						// ドラッグ開始
+      						dragging = true;
+
+      						// ノードリストの最後尾に再配置（最前面化）
+      						var parent = element.parentNode;
+      						if(parent){
+      							parent.appendChild(element);
+      						}
+      					}
+      				}
+
+      				// ドラッグ操作中
+      				if(dragging){
+
+      					// 前回と今回の差分
+      					var sub_x = mouse_move.x - mouse_old.x;
+      					var sub_y = mouse_move.y - mouse_old.y;
+      					mouse_old.x = mouse_move.x;
+      					mouse_old.y = mouse_move.y;
+
+      					// 座標に加算
+      					element_pos.x += sub_x;
+      					element_pos.y += sub_y;
+
+      					// 要素を移動
+      					var style = element.style;
+      					style.left = (element_pos.x) + "px";
+      					style.top  = (element_pos.y) + "px";
+      				}
+
+              			},1000/60);
+              		};
+
+              		// ------------------------------------------------------------
+              		// タスク破棄
+              		// ------------------------------------------------------------
+              		function deleteTask(){
+              			if(time_handle === null) return;
+              			clearInterval(time_handle);
+              			time_handle = null;
+              		};
+
+              		// ------------------------------------------------------------
+              		// 開放
+              		// ------------------------------------------------------------
+              		_this.release = function(){
+              			// タスクを終了
+              			deleteTask();
+
+              			// リッスンを終了
+              			if(window.removeEventListener){
+              				element.removeEventListener("mousedown" , mouseDown);
+              				window.removeEventListener("mousemove" , mouseMove);
+              				window.removeEventListener("mouseup" , mouseUp);
+              				element.removeEventListener("dragstart" , dragStart);
+              			}else if(document.detachEvent){
+              				element.detachEvent("onmousedown" , mouseDown);
+              				document.detachEvent("onmousemove" , mouseMove);
+              				document.detachEvent("onmouseup" , mouseUp);
+              				element.detachEvent("ondragstart" , dragStart);
+              			}
+              		};
+
+              		// ------------------------------------------------------------
+              		// 初期化
+              		// ------------------------------------------------------------
+              		var mouse_pressed = false;
+              		var mouse_down = new Object();
+              		var mouse_move = new Object();
+              		var mouse_old = new Object();
+              		var element_pos = new Object();
+              		var time_handle = null;
+              		var dragging = false;
+                  // リッスンを開始
+                  		if(window.addEventListener){
+                  			element.addEventListener("mousedown" , mouseDown);
+                  			window.addEventListener("mousemove" , mouseMove);
+                  			window.addEventListener("mouseup" , mouseUp);
+                  			element.addEventListener("dragstart" , dragStart);
+                  		}else if(document.attachEvent){
+                  			element.attachEvent("onmousedown" , mouseDown);
+                  			document.attachEvent("onmousemove" , mouseMove);
+                  			document.attachEvent("onmouseup" , mouseUp);
+                  			element.attachEvent("ondragstart" , dragStart);
+                  		}
+
+                  	}
+
+                      //-->
+</script>
+</html>

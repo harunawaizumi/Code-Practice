@@ -1,0 +1,37 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+
+<title>座標テスト</title>
+</head>
+<body>
+<div id="foo" style="width: 500px; height: 500px; position: relative; background-color: yellow; margin-left: 200px; margin-top: 200px;">
+  <div id="message" style="position: absolute; background: lightgray; width: 100px;"> Hello, world!</div>
+</div>
+</body>
+<script type="text/javascript">
+// この要素内だったらクリックしたところにメッセージが移動する
+var foo = document.getElementById('foo');
+function getPosition(event) {
+  var x = event.clientX;
+  var y = event.clientY;
+  var r = event.target.getBoundingClientRect();
+  x = x - r.left;
+  y = y - r.top;
+  return { x: x, y: y};
+}
+
+foo.addEventListener('click', function(event) {
+  var message = document.getElementById('message');
+  if (event.target === message) {
+    return;
+  }
+
+  var pos = getPosition(event);
+  message.style.left = pos.x;
+  message.style.top = pos.y;
+}, false);
+</script>
+</html>

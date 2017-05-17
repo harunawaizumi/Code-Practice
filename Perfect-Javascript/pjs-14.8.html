@@ -1,0 +1,47 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+
+<title>HashFragment</title>
+</head>
+<body>
+
+
+</body>
+<script type="text/javascript">
+
+window.onload = updateContent;
+
+window.onpopstate = updateContent;
+
+function gotoContent(date, title, pathname) {
+	updateContent;
+}
+
+function updateContent() {
+	if (history.state && history.state.prev_url ) {
+		backLink.href = history.state.prev_url;
+		backLink.textContent = history.state.prev_title || 'Back';
+		backLink.style.display = '';
+	} else {
+		backLink.style.display = 'none';
+	}
+}
+
+function gotoPage(num) {
+	updateContent(num);
+
+	lacation.hash = '#!page=' + num;
+}
+
+sindow.onhashchange = function() {
+	var num = location.hash.match(/#!page=([0-9]+)/)[1];
+
+	updateContent(num);
+};
+
+
+</script>
+</html>
